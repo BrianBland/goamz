@@ -4,7 +4,7 @@ package iam
 
 import (
 	"encoding/xml"
-	"github.com/AdRoll/goamz/aws"
+	"github.com/docker/goamz/aws"
 	"net/http"
 	"net/url"
 	"strconv"

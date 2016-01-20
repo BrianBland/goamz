@@ -6,9 +6,9 @@ import (
 
 	"gopkg.in/check.v1"
 
-	"github.com/AdRoll/goamz/aws"
-	"github.com/AdRoll/goamz/sts"
-	"github.com/AdRoll/goamz/testutil"
+	"github.com/docker/goamz/aws"
+	"github.com/docker/goamz/sts"
+	"github.com/docker/goamz/testutil"
 )
 
 func Test(t *testing.T) {

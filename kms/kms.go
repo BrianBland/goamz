@@ -10,7 +10,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/AdRoll/goamz/aws"
+	"github.com/docker/goamz/aws"
 	"io/ioutil"
 	"net/http"
 	"time"

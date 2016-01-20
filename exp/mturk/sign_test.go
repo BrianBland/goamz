@@ -1,8 +1,8 @@
 package mturk_test
 
 import (
-	"github.com/AdRoll/goamz/aws"
-	"github.com/AdRoll/goamz/exp/mturk"
+	"github.com/docker/goamz/aws"
+	"github.com/docker/goamz/exp/mturk"
 	"gopkg.in/check.v1"
 )
 

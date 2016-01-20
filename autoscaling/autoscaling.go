@@ -3,7 +3,7 @@ package autoscaling
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/AdRoll/goamz/aws"
+	"github.com/docker/goamz/aws"
 	"log"
 	"net/http"
 	"net/http/httputil"
