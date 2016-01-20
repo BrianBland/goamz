@@ -1,7 +1,7 @@
 //
 // sts: This package provides types and functions to interact with the AWS STS API
 //
-// Depends on https://github.com/AdRoll/goamz
+// Depends on https://github.com/docker/goamz
 //
 
 package sts
@@ -17,7 +17,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AdRoll/goamz/aws"
+	"github.com/docker/goamz/aws"
 )
 
 // The STS type encapsulates operations within a specific EC2 region.

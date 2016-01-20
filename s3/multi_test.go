@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/AdRoll/goamz/s3"
+	"github.com/docker/goamz/s3"
 	"gopkg.in/check.v1"
 )
 
@@ -22,7 +22,7 @@ func (s *S) TestInitMulti(c *check.C) {
 		Meta:             metadata,
 		ContentEncoding:  "text/utf8",
 		CacheControl:     "no-cache",
-		RedirectLocation: "http://github.com/AdRoll/goamz",
+		RedirectLocation: "http://github.com/docker/goamz",
 		ContentMD5:       "0000000000000000",
 	}
 
@@ -40,7 +40,7 @@ func (s *S) TestInitMulti(c *check.C) {
 	c.Assert(req.Header["Content-Encoding"], check.DeepEquals, []string{"text/utf8"})
 	c.Assert(req.Header["Cache-Control"], check.DeepEquals, []string{"no-cache"})
 	c.Assert(req.Header["Content-Md5"], check.DeepEquals, []string{"0000000000000000"})
-	c.Assert(req.Header["X-Amz-Website-Redirect-Location"], check.DeepEquals, []string{"http://github.com/AdRoll/goamz"})
+	c.Assert(req.Header["X-Amz-Website-Redirect-Location"], check.DeepEquals, []string{"http://github.com/docker/goamz"})
 	c.Assert(req.Header["X-Amz-Meta-Key1"], check.DeepEquals, []string{"value1"})
 	c.Assert(req.Header["X-Amz-Meta-Key2"], check.DeepEquals, []string{"value2"})
 

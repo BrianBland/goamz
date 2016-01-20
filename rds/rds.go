@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/AdRoll/goamz/aws"
+	"github.com/docker/goamz/aws"
 )
 
 const debug = false

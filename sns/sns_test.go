@@ -1,9 +1,9 @@
 package sns_test
 
 import (
-	"github.com/AdRoll/goamz/aws"
-	"github.com/AdRoll/goamz/sns"
-	"github.com/AdRoll/goamz/testutil"
+	"github.com/docker/goamz/aws"
+	"github.com/docker/goamz/sns"
+	"github.com/docker/goamz/testutil"
 	"gopkg.in/check.v1"
 	"testing"
 )

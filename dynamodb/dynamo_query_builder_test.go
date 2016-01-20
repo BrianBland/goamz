@@ -3,8 +3,8 @@ package dynamodb
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/AdRoll/goamz/aws"
-	"github.com/AdRoll/goamz/dynamodb/dynamizer"
+	"github.com/docker/goamz/aws"
+	"github.com/docker/goamz/dynamodb/dynamizer"
 	"reflect"
 	"testing"
 )
