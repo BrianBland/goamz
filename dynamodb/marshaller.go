@@ -229,7 +229,7 @@ func (e *attributeBuilder) reflectToDynamoDBAttribute(name string, v reflect.Val
 		case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr, reflect.Float32, reflect.Float64:
 			nativeSetCreated = true
 			arrystrings := make([]string, v.Len())
-			for i, _ := range arrystrings {
+			for i := range arrystrings {
 				var err error
 				arrystrings[i], err = numericReflectedValueString(v.Index(i))
 				if err != nil {
@@ -240,7 +240,7 @@ func (e *attributeBuilder) reflectToDynamoDBAttribute(name string, v reflect.Val
 		case reflect.String: // simple copy will suffice
 			nativeSetCreated = true
 			arrystrings := make([]string, v.Len())
-			for i, _ := range arrystrings {
+			for i := range arrystrings {
 				arrystrings[i] = v.Index(i).String()
 			}
 			e.Push(NewStringSetAttribute(name, arrystrings))

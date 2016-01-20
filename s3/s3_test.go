@@ -353,7 +353,7 @@ func (s *S) TestDelMultiObjects(c *check.C) {
 	testServer.Response(200, nil, "")
 
 	b := s.s3.Bucket("bucket")
-	objects := []s3.Object{s3.Object{Key: "test"}}
+	objects := []s3.Object{{Key: "test"}}
 	err := b.DelMulti(s3.Delete{
 		Quiet:   false,
 		Objects: objects,
@@ -487,11 +487,11 @@ func (s *S) TestGetService(c *check.C) {
 			DisplayName: "webfile",
 		},
 		Buckets: []s3.BucketInfo{
-			s3.BucketInfo{
+			{
 				Name:         "quotes",
 				CreationDate: "2006-02-03T16:45:09.000Z",
 			},
-			s3.BucketInfo{
+			{
 				Name:         "samples",
 				CreationDate: "2006-02-03T16:41:58.000Z",
 			},

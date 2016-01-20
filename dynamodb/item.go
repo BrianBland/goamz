@@ -7,8 +7,8 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/docker/goamz/dynamodb/dynamizer"
 	simplejson "github.com/bitly/go-simplejson"
+	"github.com/docker/goamz/dynamodb/dynamizer"
 )
 
 type BatchGetItem struct {

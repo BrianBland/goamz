@@ -35,7 +35,7 @@ lint:
 
 test-short:
 	@echo "+ $@"
-	go test -test.short -tags "${BUILDTAGS}" ./iam ./s3
+	go test -v -test.short -tags "${BUILDTAGS}" ./iam ./s3
     # go test -v ./autoscaling/
     # go test -v ./aws/
     # go test -v ./cloudfront/
@@ -58,7 +58,7 @@ test-short:
 
 test-long:
 	@echo "+ $@"
-	go test -tags "${BUILDTAGS}" ./iam ./s3
+	go test -v -tags "${BUILDTAGS}" ./iam ./s3
 
 dep-save:
 	@echo "+ $@"

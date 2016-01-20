@@ -254,7 +254,7 @@ func (s *ClientTests) TestRegions(c *check.C) {
 			errs <- err
 		}(region)
 	}
-	for _ = range aws.Regions {
+	for range aws.Regions {
 		err := <-errs
 		if err != nil {
 			s3_err, ok := err.(*s3.Error)

@@ -26,7 +26,7 @@ func (t *Table) FetchPartialResults(query ScanQuery) ([]map[string]*Attribute, S
 	}
 
 	results := make([]map[string]*Attribute, itemCount)
-	for i, _ := range results {
+	for i := range results {
 		item, err := json.Get("Items").GetIndex(i).Map()
 		if err != nil {
 			message := fmt.Sprintf("Unexpected response %s", jsonResponse)

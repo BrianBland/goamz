@@ -33,12 +33,12 @@ var item_suite = &ItemSuite{
 	TableDescriptionT: TableDescriptionT{
 		TableName: "DynamoDBTestMyTable",
 		AttributeDefinitions: []AttributeDefinitionT{
-			AttributeDefinitionT{"TestHashKey", "S"},
-			AttributeDefinitionT{"TestRangeKey", "N"},
+			{"TestHashKey", "S"},
+			{"TestRangeKey", "N"},
 		},
 		KeySchema: []KeySchemaT{
-			KeySchemaT{"TestHashKey", "HASH"},
-			KeySchemaT{"TestRangeKey", "RANGE"},
+			{"TestHashKey", "HASH"},
+			{"TestRangeKey", "RANGE"},
 		},
 		ProvisionedThroughput: ProvisionedThroughputT{
 			ReadCapacityUnits:  1,
@@ -52,10 +52,10 @@ var item_without_range_suite = &ItemSuite{
 	TableDescriptionT: TableDescriptionT{
 		TableName: "DynamoDBTestMyTable",
 		AttributeDefinitions: []AttributeDefinitionT{
-			AttributeDefinitionT{"TestHashKey", "S"},
+			{"TestHashKey", "S"},
 		},
 		KeySchema: []KeySchemaT{
-			KeySchemaT{"TestHashKey", "HASH"},
+			{"TestHashKey", "HASH"},
 		},
 		ProvisionedThroughput: ProvisionedThroughputT{
 			ReadCapacityUnits:  1,

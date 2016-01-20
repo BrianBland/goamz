@@ -219,7 +219,7 @@ func (s *S) TestDeleteMessageBatch(c *check.C) {
 	c.Assert(req.URL.Path, check.Equals, "/123456789012/testQueue/")
 	c.Assert(req.Header["Date"], check.Not(check.Equals), "")
 
-	for idx, _ := range msgList {
+	for idx := range msgList {
 		c.Assert(resp.DeleteMessageBatchResult[idx].Id, check.Equals, fmt.Sprintf("msg%d", idx+1))
 	}
 }

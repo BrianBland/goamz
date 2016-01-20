@@ -28,12 +28,12 @@ var table_suite = &TableSuite{
 	TableDescriptionT: TableDescriptionT{
 		TableName: "DynamoDBTestMyTable",
 		AttributeDefinitions: []AttributeDefinitionT{
-			AttributeDefinitionT{"TestHashKey", "S"},
-			AttributeDefinitionT{"TestRangeKey", "N"},
+			{"TestHashKey", "S"},
+			{"TestRangeKey", "N"},
 		},
 		KeySchema: []KeySchemaT{
-			KeySchemaT{"TestHashKey", "HASH"},
-			KeySchemaT{"TestRangeKey", "RANGE"},
+			{"TestHashKey", "HASH"},
+			{"TestRangeKey", "RANGE"},
 		},
 		ProvisionedThroughput: ProvisionedThroughputT{
 			ReadCapacityUnits:  1,
@@ -46,23 +46,23 @@ var table_suite_gsi = &TableSuite{
 	TableDescriptionT: TableDescriptionT{
 		TableName: "DynamoDBTestMyTable2",
 		AttributeDefinitions: []AttributeDefinitionT{
-			AttributeDefinitionT{"UserId", "S"},
-			AttributeDefinitionT{"OSType", "S"},
-			AttributeDefinitionT{"IMSI", "S"},
+			{"UserId", "S"},
+			{"OSType", "S"},
+			{"IMSI", "S"},
 		},
 		KeySchema: []KeySchemaT{
-			KeySchemaT{"UserId", "HASH"},
-			KeySchemaT{"OSType", "RANGE"},
+			{"UserId", "HASH"},
+			{"OSType", "RANGE"},
 		},
 		ProvisionedThroughput: ProvisionedThroughputT{
 			ReadCapacityUnits:  1,
 			WriteCapacityUnits: 1,
 		},
 		GlobalSecondaryIndexes: []GlobalSecondaryIndexT{
-			GlobalSecondaryIndexT{
+			{
 				IndexName: "IMSIIndex",
 				KeySchema: []KeySchemaT{
-					KeySchemaT{"IMSI", "HASH"},
+					{"IMSI", "HASH"},
 				},
 				Projection: ProjectionT{
 					ProjectionType: "KEYS_ONLY",

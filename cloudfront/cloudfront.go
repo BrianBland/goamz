@@ -54,7 +54,7 @@ type policy struct {
 func buildPolicy(resource string, expireTime time.Time) ([]byte, error) {
 	p := &policy{
 		Statement: []statement{
-			statement{
+			{
 				Resource: resource,
 				Condition: condition{
 					DateLessThan: epochTime{
