@@ -115,7 +115,7 @@ func (s *TestHTTPServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	case resp = <-s.response:
 	case <-time.After(s.Timeout):
 		fmt.Fprintf(os.Stderr, "ERROR: Timeout waiting for test to provide response\n")
-		resp = &testResponse{500, nil, ""}
+		resp = &testResponse{Status: 500, Headers: nil, Body: ""}
 	}
 	if resp.Headers != nil {
 		h := w.Header()
@@ -136,7 +136,6 @@ func (s *TestHTTPServer) WaitRequest() *http.Request {
 	case <-time.After(s.Timeout):
 		panic("Timeout waiting for goamz request")
 	}
-	panic("unreached")
 }
 
 func (s *TestHTTPServer) PrepareResponse(status int, headers map[string]string, body string) {

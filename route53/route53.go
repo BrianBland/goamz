@@ -172,12 +172,12 @@ type ChangeInfo struct {
 }
 
 type DelegationSet struct {
-	XMLName     xml.Name `xml:"DelegationSet`
+	XMLName     xml.Name `xml:"DelegationSet"`
 	NameServers NameServers
 }
 
 type NameServers struct {
-	XMLName    xml.Name `xml:"NameServers`
+	XMLName    xml.Name `xml:"NameServers"`
 	NameServer []string
 }
 

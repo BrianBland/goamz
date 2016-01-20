@@ -24,7 +24,7 @@ func (s *S) SetUpSuite(c *check.C) {
 	var err error
 	testServer.Start()
 	auth := aws.Auth{AccessKey: "abc", SecretKey: "123"}
-	s.rds, err = rds.New(auth, aws.Region{RDSEndpoint: aws.ServiceInfo{testServer.URL, aws.V2Signature}})
+	s.rds, err = rds.New(auth, aws.Region{RDSEndpoint: aws.ServiceInfo{Endpoint: testServer.URL, Signer: aws.V2Signature}})
 	c.Assert(err, check.IsNil)
 }
 

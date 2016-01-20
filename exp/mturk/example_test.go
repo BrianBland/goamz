@@ -34,7 +34,7 @@ func Examplemturk_CreateHIT_withExternalQuestion() {
 
 func Examplemturk_CreateHIT_withHTMLQuestion() {
 	question := mturk.HTMLQuestion{
-		HTMLContent: mturk.HTMLContent{`<![CDATA[
+		HTMLContent: mturk.HTMLContent{Content: `<![CDATA[
 <!DOCTYPE html>
 <html>
  <head>

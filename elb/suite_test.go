@@ -110,7 +110,6 @@ func (s *TestHTTPServer) WaitRequest() *http.Request {
 	case <-time.After(s.Timeout):
 		panic("Timeout waiting for goamz request")
 	}
-	panic("unreached")
 }
 
 func (s *TestHTTPServer) PrepareResponse(status int, headers map[string]string, body string) {

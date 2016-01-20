@@ -35,30 +35,11 @@ lint:
 
 test-short:
 	@echo "+ $@"
-	go test -v -test.short -tags "${BUILDTAGS}" ./iam ./s3
-    # go test -v ./autoscaling/
-    # go test -v ./aws/
-    # go test -v ./cloudfront/
-    # go test -v ./cloudwatch/
-    # go test -v ./dynamodb/
-    # go test -v ./ec2/
-    # go test -v ./elasticache/
-    # go test -v ./elb/
-    # go test -v ./iam/
-    # go test -v ./kinesis/
-    # go test -v ./rds/
-    # go test -v ./route53/
-    # go test -v ./s3/
-    # go test -v ./sns/
-    # go test -v ./sqs/
-    # go test -v ./sts/
-    # go test -v ./exp/mturk/
-    # go test -v ./exp/sdb/
-    # go test -v ./exp/ses/
+	go test -v -test.short -tags "${BUILDTAGS}" ./iam/ ./s3/
 
 test-long:
 	@echo "+ $@"
-	go test -v -tags "${BUILDTAGS}" ./iam ./s3
+	go test -v -tags "${BUILDTAGS}" ./autoscaling/ ./aws/ ./cloudfront/ ./cloudwatch/ ./dynamodb/ ./ec2/ ./elasticache/ ./elb/ ./iam/ ./kinesis/ ./rds/ ./route53/ ./s3/ ./sns/ ./sqs/ ./sts/ ./exp/mturk/ ./exp/sdb/ ./exp/ses/
 
 dep-save:
 	@echo "+ $@"

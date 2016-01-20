@@ -6,7 +6,7 @@ go:
 
 script:
   - make fmt
-  - make lint
   - make vet
   - make test-short
-  - make test-long
+#  - make lint
+#  - make test-long

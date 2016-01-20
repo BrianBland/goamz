@@ -65,7 +65,7 @@ func (s *S) TestCreateHITHTMLQuestion(c *check.C) {
 	testServer.Response(200, nil, BasicHitResponse)
 
 	question := mturk.HTMLQuestion{
-		HTMLContent: mturk.HTMLContent{`<![CDATA[
+		HTMLContent: mturk.HTMLContent{Content: `<![CDATA[
 <!DOCTYPE html>
 <html>
  <head>
