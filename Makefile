@@ -39,7 +39,7 @@ test-short:
 
 test-long:
 	@echo "+ $@"
-	go test -v -tags "${BUILDTAGS}" ./autoscaling/ ./aws/ ./cloudfront/ ./cloudwatch/ ./dynamodb/ ./ec2/ ./elasticache/ ./elb/ ./iam/ ./kinesis/ ./rds/ ./route53/ ./s3/ ./sns/ ./sqs/ ./sts/ ./exp/mturk/ ./exp/sdb/ ./exp/ses/
+	go test -tags "${BUILDTAGS}" ./autoscaling/ ./aws/ ./cloudfront/ ./cloudwatch/ ./dynamodb/ ./ec2/ ./elasticache/ ./elb/ ./iam/ ./kinesis/ ./rds/ ./route53/ ./s3/ ./sns/ ./sqs/ ./sts/ ./exp/mturk/ ./exp/sdb/ ./exp/ses/
 
 dep-save:
 	@echo "+ $@"
