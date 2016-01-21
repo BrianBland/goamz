@@ -545,7 +545,7 @@ func (s *SQS) query(queueUrl string, params map[string]string, resp interface{})
 
 	if debug {
 		dump, _ := httputil.DumpResponse(r, true)
-		log.Printf("DUMP:\n", string(dump))
+		log.Printf("DUMP:\n %s", string(dump))
 	}
 
 	if r.StatusCode != 200 {

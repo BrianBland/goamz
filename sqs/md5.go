@@ -42,8 +42,8 @@ func calculateAttributeMD5(attributes map[string]string) []byte {
 			getStringLengthAsByteArray(k),
 			[]byte(k), // Name
 			getStringLengthAsByteArray(t),
-			[]byte(t),    // Data Type ("String")
-			[]byte{0x01}, // "String Value" (0x01)
+			[]byte(t), // Data Type ("String")
+			{0x01},    // "String Value" (0x01)
 			getStringLengthAsByteArray(v),
 			[]byte(v), // Value
 		}

@@ -115,54 +115,54 @@ func testObjectWithEmptySets() *TestStruct {
 
 func testAttrs() []Attribute {
 	return []Attribute{
-		Attribute{Type: "N", Name: "TestBool", Value: "1", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt", Value: "-99", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt32", Value: "999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt64", Value: "9999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestUint", Value: "99", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat32", Value: "9.9999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat64", Value: "99.999999", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestString", Value: "test", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestByteArray", Value: "Ynl0ZXM=", SetValues: []string(nil)},
-		Attribute{Type: "SS", Name: "TestStringArray", Value: "", SetValues: []string{"test1", "test2", "test3", "test4"}},
-		Attribute{Type: "NS", Name: "TestIntArray", Value: "", SetValues: []string{"0", "1", "12", "123", "1234", "12345"}},
-		Attribute{Type: "NS", Name: "TestInt8Array", Value: "", SetValues: []string{"0", "1", "12", "123"}},
-		Attribute{Type: "NS", Name: "TestFloatArray", Value: "", SetValues: []string{"0.1", "1.1", "1.2", "1.23", "1.234", "1.2345"}},
-		Attribute{Type: "S", Name: "TestSub", Value: `{"SubBool":true,"SubInt":2,"SubString":"subtest","SubStringArray":["sub1","sub2","sub3"]}`, SetValues: []string(nil)},
+		{Type: "N", Name: "TestBool", Value: "1", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt", Value: "-99", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt32", Value: "999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt64", Value: "9999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestUint", Value: "99", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat32", Value: "9.9999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat64", Value: "99.999999", SetValues: []string(nil)},
+		{Type: "S", Name: "TestString", Value: "test", SetValues: []string(nil)},
+		{Type: "S", Name: "TestByteArray", Value: "Ynl0ZXM=", SetValues: []string(nil)},
+		{Type: "SS", Name: "TestStringArray", Value: "", SetValues: []string{"test1", "test2", "test3", "test4"}},
+		{Type: "NS", Name: "TestIntArray", Value: "", SetValues: []string{"0", "1", "12", "123", "1234", "12345"}},
+		{Type: "NS", Name: "TestInt8Array", Value: "", SetValues: []string{"0", "1", "12", "123"}},
+		{Type: "NS", Name: "TestFloatArray", Value: "", SetValues: []string{"0.1", "1.1", "1.2", "1.23", "1.234", "1.2345"}},
+		{Type: "S", Name: "TestSub", Value: `{"SubBool":true,"SubInt":2,"SubString":"subtest","SubStringArray":["sub1","sub2","sub3"]}`, SetValues: []string(nil)},
 	}
 }
 
 func testAttrsTime() []Attribute {
 	return []Attribute{
-		Attribute{Type: "S", Name: "TestTime", Value: "\"2003-03-03T17:03:00Z\"", SetValues: []string(nil)},
+		{Type: "S", Name: "TestTime", Value: "\"2003-03-03T17:03:00Z\"", SetValues: []string(nil)},
 	}
 }
 
 func testAttrsWithZeroValues() []Attribute {
 	return []Attribute{
-		Attribute{Type: "N", Name: "TestBool", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt32", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt64", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestUint", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat32", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat64", Value: "0", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestSub", Value: `{"SubBool":false,"SubInt":0,"SubString":"","SubStringArray":null}`, SetValues: []string(nil)},
+		{Type: "N", Name: "TestBool", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt32", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt64", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestUint", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat32", Value: "0", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat64", Value: "0", SetValues: []string(nil)},
+		{Type: "S", Name: "TestSub", Value: `{"SubBool":false,"SubInt":0,"SubString":"","SubStringArray":null}`, SetValues: []string(nil)},
 	}
 }
 
 func testAttrsWithNilSets() []Attribute {
 	return []Attribute{
-		Attribute{Type: "N", Name: "TestBool", Value: "1", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt", Value: "-99", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt32", Value: "999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestInt64", Value: "9999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestUint", Value: "99", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat32", Value: "9.9999", SetValues: []string(nil)},
-		Attribute{Type: "N", Name: "TestFloat64", Value: "99.999999", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestString", Value: "test", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestByteArray", Value: "Ynl0ZXM=", SetValues: []string(nil)},
-		Attribute{Type: "S", Name: "TestSub", Value: `{"SubBool":true,"SubInt":2,"SubString":"subtest","SubStringArray":["sub1","sub2","sub3"]}`, SetValues: []string(nil)},
+		{Type: "N", Name: "TestBool", Value: "1", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt", Value: "-99", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt32", Value: "999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestInt64", Value: "9999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestUint", Value: "99", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat32", Value: "9.9999", SetValues: []string(nil)},
+		{Type: "N", Name: "TestFloat64", Value: "99.999999", SetValues: []string(nil)},
+		{Type: "S", Name: "TestString", Value: "test", SetValues: []string(nil)},
+		{Type: "S", Name: "TestByteArray", Value: "Ynl0ZXM=", SetValues: []string(nil)},
+		{Type: "S", Name: "TestSub", Value: `{"SubBool":true,"SubInt":2,"SubString":"subtest","SubStringArray":["sub1","sub2","sub3"]}`, SetValues: []string(nil)},
 	}
 }
 
@@ -187,7 +187,7 @@ func (s *MarshallerSuite) TestUnmarshal(c *check.C) {
 
 	attrMap := map[string]*Attribute{}
 	attrs := testAttrs()
-	for i, _ := range attrs {
+	for i := range attrs {
 		attrMap[attrs[i].Name] = &attrs[i]
 	}
 
@@ -216,7 +216,7 @@ func (s *MarshallerSuite) TestUnmarshalTime(c *check.C) {
 
 	attrMap := map[string]*Attribute{}
 	attrs := testAttrsTime()
-	for i, _ := range attrs {
+	for i := range attrs {
 		attrMap[attrs[i].Name] = &attrs[i]
 	}
 
@@ -267,7 +267,7 @@ func (s *MarshallerSuite) TestUnmarshalEmptySets(c *check.C) {
 
 	attrMap := map[string]*Attribute{}
 	attrs := testAttrsWithNilSets()
-	for i, _ := range attrs {
+	for i := range attrs {
 		attrMap[attrs[i].Name] = &attrs[i]
 	}
 

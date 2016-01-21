@@ -161,7 +161,7 @@ func (q *DynamoQuery) Marshal() ([]byte, error) {
 func NewDynamoBatchGetQuery(t *Table) *DynamoBatchGetQuery {
 	q := &DynamoBatchGetQuery{table: t}
 	q.RequestItems = map[string]*batchGetPerTableQuery{
-		t.Name: &batchGetPerTableQuery{
+		t.Name: {
 			Keys:           make([]dynamizer.DynamoItem, 0, MaxGetBatchSize),
 			ConsistentRead: false,
 		},

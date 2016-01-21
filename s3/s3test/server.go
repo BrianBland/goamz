@@ -187,7 +187,7 @@ func (srv *Server) URL() string {
 	return srv.url
 }
 
-func fatalf(code int, codeStr string, errf string, a ...interface{}) {
+func fatal(code int, codeStr string, errf string, a ...interface{}) {
 	panic(&s3Error{
 		statusCode: code,
 		Code:       codeStr,
@@ -255,7 +255,7 @@ func (srv *Server) serveHTTP(w http.ResponseWriter, req *http.Request) {
 	case "POST":
 		resp = r.post(a)
 	default:
-		fatalf(400, "MethodNotAllowed", "unknown http request method %q", req.Method)
+		fatal(400, "MethodNotAllowed", "unknown http request method %q", req.Method)
 	}
 	if resp != nil && req.Method != "HEAD" {
 		xmlMarshal(w, resp)
@@ -298,7 +298,7 @@ var pathRegexp = regexp.MustCompile("/(([^/]+)(/(.*))?)?")
 func (srv *Server) resourceForURL(u *url.URL) (r resource) {
 	m := pathRegexp.FindStringSubmatch(u.Path)
 	if m == nil {
-		fatalf(404, "InvalidURI", "Couldn't parse the specified URI")
+		fatal(404, "InvalidURI", "Couldn't parse the specified URI")
 	}
 	bucketName := m[2]
 	objectName := m[4]
@@ -320,7 +320,7 @@ func (srv *Server) resourceForURL(u *url.URL) (r resource) {
 
 	}
 	if b.bucket == nil {
-		fatalf(404, "NoSuchBucket", "The specified bucket does not exist")
+		fatal(404, "NoSuchBucket", "The specified bucket does not exist")
 	}
 	objr := objectResource{
 		name:    objectName,
@@ -342,7 +342,7 @@ func (srv *Server) resourceForURL(u *url.URL) (r resource) {
 type nullResource struct{}
 
 func notAllowed() interface{} {
-	fatalf(400, "MethodNotAllowed", "The specified method is not allowed against this resource")
+	fatal(400, "MethodNotAllowed", "The specified method is not allowed against this resource")
 	return nil
 }
 
@@ -363,7 +363,7 @@ type bucketResource struct {
 // http://docs.amazonwebservices.com/AmazonS3/latest/API/RESTBucketGET.html
 func (r bucketResource) get(a *action) interface{} {
 	if r.bucket == nil {
-		fatalf(404, "NoSuchBucket", "The specified bucket does not exist")
+		fatal(404, "NoSuchBucket", "The specified bucket does not exist")
 	}
 	delimiter := a.req.Form.Get("delimiter")
 	marker := a.req.Form.Get("marker")
@@ -371,7 +371,7 @@ func (r bucketResource) get(a *action) interface{} {
 	if s := a.req.Form.Get("max-keys"); s != "" {
 		i, err := strconv.Atoi(s)
 		if err != nil || i < 0 {
-			fatalf(400, "invalid value for max-keys: %q", s)
+			fatal(400, "invalid value for max-keys: %q", s)
 		}
 		maxKeys = i
 	}
@@ -481,10 +481,10 @@ func (obj *object) s3Key() s3.Key {
 func (r bucketResource) delete(a *action) interface{} {
 	b := r.bucket
 	if b == nil {
-		fatalf(404, "NoSuchBucket", "The specified bucket does not exist")
+		fatal(404, "NoSuchBucket", "The specified bucket does not exist")
 	}
 	if len(b.objects) > 0 {
-		fatalf(400, "BucketNotEmpty", "The bucket you tried to delete is not empty")
+		fatal(400, "BucketNotEmpty", "The bucket you tried to delete is not empty")
 	}
 	delete(a.srv.buckets, b.name)
 	return nil
@@ -496,10 +496,10 @@ func (r bucketResource) put(a *action) interface{} {
 	var created bool
 	if r.bucket == nil {
 		if !validBucketName(r.name) {
-			fatalf(400, "InvalidBucketName", "The specified bucket is not valid")
+			fatal(400, "InvalidBucketName", "The specified bucket is not valid")
 		}
 		if loc := locationConstraint(a); loc == "" {
-			fatalf(400, "InvalidRequets", "The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.")
+			fatal(400, "InvalidRequets", "The unspecified location constraint is incompatible for the region specific endpoint this request was sent to.")
 		}
 		// TODO validate acl
 		r.bucket = &bucket{
@@ -513,7 +513,7 @@ func (r bucketResource) put(a *action) interface{} {
 		created = true
 	}
 	if !created && a.srv.config.send409Conflict() {
-		fatalf(409, "BucketAlreadyOwnedByYou", "Your previous request to create the named bucket succeeded and you already own it.")
+		fatal(409, "BucketAlreadyOwnedByYou", "Your previous request to create the named bucket succeeded and you already own it.")
 	}
 	r.bucket.acl = s3.ACL(a.req.Header.Get("x-amz-acl"))
 	return nil
@@ -524,7 +524,7 @@ func (r bucketResource) post(a *action) interface{} {
 		return r.multiDel(a)
 	}
 
-	fatalf(400, "Method", "bucket operation not supported")
+	fatal(400, "Method", "bucket operation not supported")
 	return nil
 }
 
@@ -560,7 +560,7 @@ func (b bucketResource) multiDel(a *action) interface{} {
 	req := &multiDelRequest{}
 
 	if err := xml.NewDecoder(a.req.Body).Decode(req); err != nil {
-		fatalf(400, "InvalidRequest", err.Error())
+		fatal(400, "InvalidRequest", err.Error())
 	}
 
 	res := &multiDelResult{
@@ -645,7 +645,7 @@ type objectResource struct {
 func (objr objectResource) get(a *action) interface{} {
 	obj := objr.object
 	if obj == nil {
-		fatalf(404, "NoSuchKey", "The specified key does not exist.")
+		fatal(404, "NoSuchKey", "The specified key does not exist.")
 	}
 	h := a.w.Header()
 	// add metadata
@@ -679,7 +679,7 @@ func (objr objectResource) get(a *action) interface{} {
 			}
 			if err == nil && start >= 0 && end >= start {
 				if start >= len(obj.data) {
-					fatalf(416, "InvalidRequest", "The requested range is not satisfiable")
+					fatal(416, "InvalidRequest", "The requested range is not satisfiable")
 				}
 				if end > len(obj.data)-1 {
 					end = len(obj.data) - 1
@@ -740,19 +740,19 @@ func (objr objectResource) put(a *action) interface{} {
 	// Check that the upload ID is valid if this is a multipart upload
 	if uploadId != "" {
 		if _, ok := objr.bucket.multipartUploads[uploadId]; !ok {
-			fatalf(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
+			fatal(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
 		}
 
 		partNumberStr := a.req.URL.Query().Get("partNumber")
 
 		if partNumberStr == "" {
-			fatalf(400, "InvalidRequest", "Missing partNumber parameter")
+			fatal(400, "InvalidRequest", "Missing partNumber parameter")
 		}
 
 		number, err := strconv.ParseUint(partNumberStr, 10, 32)
 
 		if err != nil {
-			fatalf(400, "InvalidRequest", "partNumber is not a number")
+			fatal(400, "InvalidRequest", "partNumber is not a number")
 		}
 
 		partNumber = uint(number)
@@ -763,21 +763,21 @@ func (objr objectResource) put(a *action) interface{} {
 		var err error
 		expectHash, err = base64.StdEncoding.DecodeString(c)
 		if err != nil || len(expectHash) != md5.Size {
-			fatalf(400, "InvalidDigest", "The Content-MD5 you specified was invalid")
+			fatal(400, "InvalidDigest", "The Content-MD5 you specified was invalid")
 		}
 	}
 	sum := md5.New()
 	// TODO avoid holding lock while reading data.
 	data, err := ioutil.ReadAll(io.TeeReader(a.req.Body, sum))
 	if err != nil {
-		fatalf(400, "TODO", "read error")
+		fatal(400, "TODO", "read error")
 	}
 	gotHash := sum.Sum(nil)
 	if expectHash != nil && bytes.Compare(gotHash, expectHash) != 0 {
-		fatalf(400, "BadDigest", "The Content-MD5 you specified did not match what we received")
+		fatal(400, "BadDigest", "The Content-MD5 you specified did not match what we received")
 	}
 	if a.req.ContentLength >= 0 && int64(len(data)) != a.req.ContentLength {
-		fatalf(400, "IncompleteBody", "You did not provide the number of bytes specified by the Content-Length HTTP header")
+		fatal(400, "IncompleteBody", "You did not provide the number of bytes specified by the Content-Length HTTP header")
 	}
 
 	etag := fmt.Sprintf("\"%x\"", gotHash)
@@ -809,7 +809,7 @@ func (objr objectResource) put(a *action) interface{} {
 			idx := strings.IndexByte(copySource, '/')
 
 			if idx == -1 {
-				fatalf(400, "InvalidRequest", "Wrongly formatted X-Amz-Copy-Source")
+				fatal(400, "InvalidRequest", "Wrongly formatted X-Amz-Copy-Source")
 			}
 
 			sourceBucketName := copySource[0:idx]
@@ -818,13 +818,13 @@ func (objr objectResource) put(a *action) interface{} {
 			sourceBucket := a.srv.buckets[sourceBucketName]
 
 			if sourceBucket == nil {
-				fatalf(404, "NoSuchBucket", "The specified source bucket does not exist")
+				fatal(404, "NoSuchBucket", "The specified source bucket does not exist")
 			}
 
 			sourceObject := sourceBucket.objects[sourceKey]
 
 			if sourceObject == nil {
-				fatalf(404, "NoSuchKey", "The specified source key does not exist")
+				fatal(404, "NoSuchKey", "The specified source key does not exist")
 			}
 
 			obj.data = make([]byte, len(sourceObject.data))
@@ -877,7 +877,7 @@ func (objr objectResource) delete(a *action) interface{} {
 		_, ok := objr.bucket.multipartUploads[uploadId]
 
 		if !ok {
-			fatalf(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
+			fatal(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
 		}
 
 		delete(objr.bucket.multipartUploads, uploadId)
@@ -937,17 +937,17 @@ func (objr objectResource) post(a *action) interface{} {
 		parts, ok := objr.bucket.multipartUploads[uploadId]
 
 		if !ok {
-			fatalf(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
+			fatal(404, "NoSuchUpload", "The specified multipart upload does not exist. The upload ID might be invalid, or the multipart upload might have been aborted or completed.")
 		}
 
 		req := &multipartCompleteRequest{}
 
 		if err := xml.NewDecoder(a.req.Body).Decode(req); err != nil {
-			fatalf(400, "InvalidRequest", err.Error())
+			fatal(400, "InvalidRequest", err.Error())
 		}
 
 		if len(req.Part) != len(parts) {
-			fatalf(400, "InvalidRequest", fmt.Sprintf("Number of parts does not match: expected %d, received %d", len(parts), len(req.Part)))
+			fatal(400, "InvalidRequest", fmt.Sprintf("Number of parts does not match: expected %d, received %d", len(parts), len(req.Part)))
 		}
 
 		sum := md5.New()
@@ -960,11 +960,11 @@ func (objr objectResource) post(a *action) interface{} {
 			reqPart := req.Part[i]
 
 			if reqPart.PartNumber != p.index {
-				fatalf(400, "InvalidRequest", "Bad part number")
+				fatal(400, "InvalidRequest", "Bad part number")
 			}
 
 			if reqPart.ETag != p.etag {
-				fatalf(400, "InvalidRequest", fmt.Sprintf("Invalid etag for part %d", reqPart.PartNumber))
+				fatal(400, "InvalidRequest", fmt.Sprintf("Invalid etag for part %d", reqPart.PartNumber))
 			}
 
 			w.Write(p.data)
@@ -997,7 +997,7 @@ func (objr objectResource) post(a *action) interface{} {
 		}
 	}
 
-	fatalf(400, "MethodNotAllowed", "The specified method is not allowed against this resource")
+	fatal(400, "MethodNotAllowed", "The specified method is not allowed against this resource")
 	return nil
 }
 
@@ -1010,14 +1010,14 @@ type CreateBucketConfiguration struct {
 func locationConstraint(a *action) string {
 	var body bytes.Buffer
 	if _, err := io.Copy(&body, a.req.Body); err != nil {
-		fatalf(400, "InvalidRequest", err.Error())
+		fatal(400, "InvalidRequest", "%s", err.Error())
 	}
 	if body.Len() == 0 {
 		return ""
 	}
 	var loc CreateBucketConfiguration
 	if err := xml.NewDecoder(&body).Decode(&loc); err != nil {
-		fatalf(400, "InvalidRequest", err.Error())
+		fatal(400, "InvalidRequest", "%s", err.Error())
 	}
 	return loc.LocationConstraint
 }

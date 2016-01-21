@@ -29,53 +29,53 @@ type dynamizerTestInput struct {
 
 var dynamizerTestInputs = []dynamizerTestInput{
 	// Scalar tests
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"string": "some string"},
 		expected: `{"string":{"S":"some string"}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"bool": true},
 		expected: `{"bool":{"BOOL":true}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"bool": false},
 		expected: `{"bool":{"BOOL":false}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"null": nil},
 		expected: `{"null":{"NULL":true}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"float": 3.14},
 		expected: `{"float":{"N":"3.14"}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"float": math.MaxFloat32},
 		expected: `{"float":{"N":"340282346638528860000000000000000000000"}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"float": math.MaxFloat64},
 		expected: `{"float":{"N":"179769313486231570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}}`},
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"int": int(12)},
 		expected: `{"int":{"N":"12"}}`},
 	// List
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"list": []interface{}{"a string", 12, 3.14, true, nil, false}},
 		expected: `{"list":{"L":[{"S":"a string"},{"N":"12"},{"N":"3.14"},{"BOOL":true},{"NULL":true},{"BOOL":false}]}}`},
 	// Map
-	dynamizerTestInput{
+	{
 		input:    map[string]interface{}{"map": map[string]interface{}{"nestedint": 12}},
 		expected: `{"map":{"M":{"nestedint":{"N":"12"}}}}`},
-	dynamizerTestInput{
+	{
 		input:    &map[string]interface{}{"map": map[string]interface{}{"nestedint": 12}},
 		expected: `{"map":{"M":{"nestedint":{"N":"12"}}}}`},
 	// Structs
-	dynamizerTestInput{
+	{
 		input:    mySimpleStruct{},
 		expected: `{"Bool":{"BOOL":false},"Float32":{"N":"0"},"Float64":{"N":"0"},"Int":{"N":"0"},"Null":{"NULL":true},"string":{"S":""},"uint":{"N":"0"}}`},
-	dynamizerTestInput{
+	{
 		input:    &mySimpleStruct{},
 		expected: `{"Bool":{"BOOL":false},"Float32":{"N":"0"},"Float64":{"N":"0"},"Int":{"N":"0"},"Null":{"NULL":true},"string":{"S":""},"uint":{"N":"0"}}`},
-	dynamizerTestInput{
+	{
 		input:    myComplexStruct{},
 		expected: `{"Simple":{"NULL":true}}`},
-	dynamizerTestInput{
-		input:    myComplexStruct{Simple: []mySimpleStruct{mySimpleStruct{}, mySimpleStruct{}}},
+	{
+		input:    myComplexStruct{Simple: []mySimpleStruct{{}, {}}},
 		expected: `{"Simple":{"L":[{"M":{"Bool":{"BOOL":false},"Float32":{"N":"0"},"Float64":{"N":"0"},"Int":{"N":"0"},"Null":{"NULL":true},"string":{"S":""},"uint":{"N":"0"}}},{"M":{"Bool":{"BOOL":false},"Float32":{"N":"0"},"Float64":{"N":"0"},"Int":{"N":"0"},"Null":{"NULL":true},"string":{"S":""},"uint":{"N":"0"}}}]}}`},
 }
 

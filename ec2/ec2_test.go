@@ -630,7 +630,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 	expected := ec2.SecurityGroupsResp{
 		RequestId: "59dbff89-35bd-4eac-99ed-be587EXAMPLE",
 		Groups: []ec2.SecurityGroupInfo{
-			ec2.SecurityGroupInfo{
+			{
 				SecurityGroup: ec2.SecurityGroup{
 					Id:   "sg-67ad940e",
 					Name: "WebServers",
@@ -638,7 +638,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 				OwnerId:     "999988887777",
 				Description: "Web Servers",
 				IPPerms: []ec2.IPPerm{
-					ec2.IPPerm{
+					{
 						Protocol:     "tcp",
 						FromPort:     80,
 						ToPort:       80,
@@ -647,7 +647,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 					},
 				},
 				IPPermsEgress: []ec2.IPPerm{
-					ec2.IPPerm{
+					{
 						Protocol:     "tcp",
 						FromPort:     22,
 						ToPort:       22,
@@ -656,7 +656,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 					},
 				},
 			},
-			ec2.SecurityGroupInfo{
+			{
 				SecurityGroup: ec2.SecurityGroup{
 					Id:   "sg-76abc467",
 					Name: "RangedPortsBySource",
@@ -664,7 +664,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 				OwnerId:     "999988887777",
 				Description: "Group A",
 				IPPerms: []ec2.IPPerm{
-					ec2.IPPerm{
+					{
 						Protocol: "tcp",
 						FromPort: 6000,
 						ToPort:   7000,
@@ -672,7 +672,7 @@ func (s *S) TestDescribeSecurityGroups(c *check.C) {
 				},
 				VpcId: "vpc-12345678",
 				Tags: []ec2.Tag{
-					ec2.Tag{
+					{
 						Key:   "key",
 						Value: "value",
 					},

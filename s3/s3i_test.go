@@ -254,7 +254,7 @@ func (s *ClientTests) TestRegions(c *check.C) {
 			errs <- err
 		}(region)
 	}
-	for _ = range aws.Regions {
+	for range aws.Regions {
 		err := <-errs
 		if err != nil {
 			s3_err, ok := err.(*s3.Error)
@@ -495,7 +495,7 @@ func (s *ClientTests) TestMultiComplete(c *check.C) {
 	c.Assert(len(data), check.Equals, len(data1)+len(data2))
 	for i := range data1 {
 		if data[i] != data1[i] {
-			c.Fatalf("uploaded object at byte %d: want %d, got %d", data1[i], data[i])
+			c.Fatalf("uploaded object at byte %d: want %d, got %d", i, data1[i], data[i])
 		}
 	}
 	c.Assert(string(data[len(data1):]), check.Equals, string(data2))

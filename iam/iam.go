@@ -374,7 +374,6 @@ func (iam *IAM) GetUserPolicy(userName, policyName string) (*GetUserPolicyResp, 
 		return nil, err
 	}
 	return resp, nil
-	return nil, nil
 }
 
 // PutUserPolicy creates a user policy in IAM.

@@ -27,10 +27,10 @@ func (s *RetrySuite) SetUpSuite(c *check.C) {
 	s.TableDescriptionT = TableDescriptionT{
 		TableName: "DynamoDBTestMyTable",
 		AttributeDefinitions: []AttributeDefinitionT{
-			AttributeDefinitionT{"TestHashKey", "S"},
+			{"TestHashKey", "S"},
 		},
 		KeySchema: []KeySchemaT{
-			KeySchemaT{"TestHashKey", "HASH"},
+			{"TestHashKey", "HASH"},
 		},
 		ProvisionedThroughput: ProvisionedThroughputT{
 			ReadCapacityUnits:  1,
@@ -143,7 +143,7 @@ func (s *RetrySuite) TestRetryPolicy(c *check.C) {
 			"X-Amz-Target":         true,
 			"X-Amz-Security-Token": true,
 		}
-		for h, _ := range r.Header {
+		for h := range r.Header {
 			if _, ok := headersToKeep[h]; ok {
 				newr.Header.Set(h, r.Header.Get(h))
 			}

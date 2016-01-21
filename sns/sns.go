@@ -201,7 +201,7 @@ func (sns *SNS) Subscribe(topicArn, protocol, endpoint string) (*SubscribeRespon
 func (sns *SNS) UnsubscribeFromHttp(notification *HttpNotification,
 	authenticateOnUnsubscribe string) (*UnsubscribeResponse, error) {
 	if notification.Type != MESSAGE_TYPE_NOTIFICATION {
-		return nil, fmt.Errorf("Expected message type \"%S\", found \"%s\"",
+		return nil, fmt.Errorf("Expected message type \"%s\", found \"%s\"",
 			MESSAGE_TYPE_NOTIFICATION, notification.Type)
 	}
 	return sns.Unsubscribe(notification.TopicArn)
@@ -227,7 +227,7 @@ func (sns *SNS) ConfirmSubscriptionFromHttp(notification *HttpNotification,
 	authenticateOnUnsubscribe string) (*ConfirmSubscriptionResponse, error) {
 	if notification.Type != MESSAGE_TYPE_SUBSCRIPTION_CONFIRMATION &&
 		notification.Type != MESSAGE_TYPE_UNSUBSCRIBE_CONFIRMATION {
-		return nil, fmt.Errorf("Expected message type \"%S\" or \"%s\", found \"%s\"",
+		return nil, fmt.Errorf("Expected message type \"%s\" or \"%s\", found \"%s\"",
 			MESSAGE_TYPE_SUBSCRIPTION_CONFIRMATION, MESSAGE_TYPE_UNSUBSCRIBE_CONFIRMATION, notification.Type)
 	}
 	return sns.ConfirmSubscription(notification.TopicArn, notification.Token, authenticateOnUnsubscribe)

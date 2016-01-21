@@ -311,7 +311,7 @@ func (srv *Server) serveHTTP(w http.ResponseWriter, req *http.Request) {
 
 	f := actions[req.Form.Get("Action")]
 	if f == nil {
-		fatalf(400, "InvalidParameterValue", "Unrecognized Action")
+		fatal(400, "InvalidParameterValue", "Unrecognized Action")
 	}
 
 	response := f(srv, w, req, a.RequestId)
@@ -379,7 +379,7 @@ func (srv *Server) formToGroups(form url.Values) []*securityGroup {
 			if g := srv.groups[values[0]]; g != nil {
 				groups = append(groups, g)
 			} else {
-				fatalf(400, "InvalidGroup.NotFound", "unknown group id %q", values[0])
+				fatal(400, "InvalidGroup.NotFound", "unknown group id %q", values[0])
 			}
 		case strings.HasPrefix(name, "SecurityGroup."):
 			var found *securityGroup
@@ -389,7 +389,7 @@ func (srv *Server) formToGroups(form url.Values) []*securityGroup {
 				}
 			}
 			if found == nil {
-				fatalf(400, "InvalidGroup.NotFound", "unknown group name %q", values[0])
+				fatal(400, "InvalidGroup.NotFound", "unknown group name %q", values[0])
 			}
 			groups = append(groups, found)
 		}
@@ -402,17 +402,17 @@ func (srv *Server) runInstances(w http.ResponseWriter, req *http.Request, reqId 
 	min := atoi(req.Form.Get("MinCount"))
 	max := atoi(req.Form.Get("MaxCount"))
 	if min < 0 || max < 1 {
-		fatalf(400, "InvalidParameterValue", "bad values for MinCount or MaxCount")
+		fatal(400, "InvalidParameterValue", "bad values for MinCount or MaxCount")
 	}
 	if min > max {
-		fatalf(400, "InvalidParameterCombination", "MinCount is greater than MaxCount")
+		fatal(400, "InvalidParameterCombination", "MinCount is greater than MaxCount")
 	}
 	var userData []byte
 	if data := req.Form.Get("UserData"); data != "" {
 		var err error
 		userData, err = b64.DecodeString(data)
 		if err != nil {
-			fatalf(400, "InvalidParameterValue", "bad UserData value: %v", err)
+			fatal(400, "InvalidParameterValue", "bad UserData value: %v", err)
 		}
 	}
 
@@ -475,7 +475,7 @@ func (srv *Server) NewInstances(n int, instType string, imageId string, state ec
 	for i, group := range groups {
 		g := srv.group(group)
 		if g == nil {
-			fatalf(400, "InvalidGroup.NotFound", "no such group %v", g)
+			fatal(400, "InvalidGroup.NotFound", "no such group %v", g)
 		}
 		rgroups[i] = g
 	}
@@ -524,7 +524,7 @@ func (srv *Server) terminateInstances(w http.ResponseWriter, req *http.Request, 
 			id := vals[0]
 			inst := srv.instances[id]
 			if inst == nil {
-				fatalf(400, "InvalidInstanceID.NotFound", "no such instance id %q", id)
+				fatal(400, "InvalidInstanceID.NotFound", "no such instance id %q", id)
 			}
 			insts = append(insts, inst)
 		}
@@ -598,12 +598,12 @@ var (
 func (srv *Server) createSecurityGroup(w http.ResponseWriter, req *http.Request, reqId string) interface{} {
 	name := req.Form.Get("GroupName")
 	if name == "" {
-		fatalf(400, "InvalidParameterValue", "empty security group name")
+		fatal(400, "InvalidParameterValue", "empty security group name")
 	}
 	srv.mu.Lock()
 	defer srv.mu.Unlock()
 	if srv.group(ec2.SecurityGroup{Name: name}) != nil {
-		fatalf(400, "InvalidGroup.Duplicate", "group %q already exists", name)
+		fatal(400, "InvalidGroup.Duplicate", "group %q already exists", name)
 	}
 	g := &securityGroup{
 		name:        name,
@@ -629,7 +629,7 @@ func (srv *Server) createSecurityGroup(w http.ResponseWriter, req *http.Request,
 }
 
 func (srv *Server) notImplemented(w http.ResponseWriter, req *http.Request, reqId string) interface{} {
-	fatalf(500, "InternalError", "not implemented")
+	fatal(500, "InternalError", "not implemented")
 	panic("not reached")
 }
 
@@ -643,7 +643,7 @@ func (srv *Server) describeInstances(w http.ResponseWriter, req *http.Request, r
 		}
 		inst := srv.instances[vals[0]]
 		if inst == nil {
-			fatalf(400, "InvalidInstanceID.NotFound", "instance %q not found", vals[0])
+			fatal(400, "InvalidInstanceID.NotFound", "instance %q not found", vals[0])
 		}
 		insts[inst] = true
 	}
@@ -662,7 +662,7 @@ func (srv *Server) describeInstances(w http.ResponseWriter, req *http.Request, r
 			if ok {
 				instances = append(instances, inst.ec2instance())
 			} else if err != nil {
-				fatalf(400, "InvalidParameterValue", "describe instances: %v", err)
+				fatal(400, "InvalidParameterValue", "describe instances: %v", err)
 			}
 		}
 		if len(instances) > 0 {
@@ -699,7 +699,7 @@ func (srv *Server) describeSecurityGroups(w http.ResponseWriter, req *http.Reque
 		}
 		sg := srv.group(g)
 		if sg == nil {
-			fatalf(400, "InvalidGroup.NotFound", "no such group %v", g)
+			fatal(400, "InvalidGroup.NotFound", "no such group %v", g)
 		}
 		groups = append(groups, sg)
 	}
@@ -722,7 +722,7 @@ func (srv *Server) describeSecurityGroups(w http.ResponseWriter, req *http.Reque
 				IPPerms:       group.ec2Perms(),
 			})
 		} else if err != nil {
-			fatalf(400, "InvalidParameterValue", "describe security groups: %v", err)
+			fatal(400, "InvalidParameterValue", "describe security groups: %v", err)
 		}
 	}
 	return &resp
@@ -736,20 +736,20 @@ func (srv *Server) authorizeSecurityGroupIngress(w http.ResponseWriter, req *htt
 		Id:   req.Form.Get("GroupId"),
 	})
 	if g == nil {
-		fatalf(400, "InvalidGroup.NotFound", "group not found")
+		fatal(400, "InvalidGroup.NotFound", "group not found")
 	}
 	perms := srv.parsePerms(req)
 
 	for _, p := range perms {
 		if g.perms[p] {
-			fatalf(400, "InvalidPermission.Duplicate", "Permission has already been authorized on the specified group")
+			fatal(400, "InvalidPermission.Duplicate", "Permission has already been authorized on the specified group")
 		}
 	}
 	for _, p := range perms {
 		g.perms[p] = true
 	}
 	return &ec2.SimpleResp{
-		XMLName:   xml.Name{"", "AuthorizeSecurityGroupIngressResponse"},
+		XMLName:   xml.Name{Space: "", Local: "AuthorizeSecurityGroupIngressResponse"},
 		RequestId: reqId,
 	}
 }
@@ -762,7 +762,7 @@ func (srv *Server) revokeSecurityGroupIngress(w http.ResponseWriter, req *http.R
 		Id:   req.Form.Get("GroupId"),
 	})
 	if g == nil {
-		fatalf(400, "InvalidGroup.NotFound", "group not found")
+		fatal(400, "InvalidGroup.NotFound", "group not found")
 	}
 	perms := srv.parsePerms(req)
 
@@ -772,7 +772,7 @@ func (srv *Server) revokeSecurityGroupIngress(w http.ResponseWriter, req *http.R
 		delete(g.perms, p)
 	}
 	return &ec2.SimpleResp{
-		XMLName:   xml.Name{"", "RevokeSecurityGroupIngressResponse"},
+		XMLName:   xml.Name{Space: "", Local: "RevokeSecurityGroupIngressResponse"},
 		RequestId: reqId,
 	}
 }
@@ -842,18 +842,18 @@ func (srv *Server) parsePerms(req *http.Request) []permKey {
 				// correctly specified.
 				// By failing here, we ensure that we fail early in this case.
 				if !ownerIdPat.MatchString(val) {
-					fatalf(400, "InvalidUserID.Malformed", "Invalid user ID: %q", val)
+					fatal(400, "InvalidUserID.Malformed", "Invalid user ID: %q", val)
 				}
 				g.OwnerId = val
 			case "GroupName":
 				g.Name = val
 			case "GroupId":
 				if !secGroupPat.MatchString(val) {
-					fatalf(400, "InvalidGroupId.Malformed", "Invalid group ID: %q", val)
+					fatal(400, "InvalidGroupId.Malformed", "Invalid group ID: %q", val)
 				}
 				g.Id = val
 			default:
-				fatalf(400, "UnknownParameter", "unknown parameter %q", name)
+				fatal(400, "UnknownParameter", "unknown parameter %q", name)
 			}
 			sourceGroups[k] = g
 		case strings.HasPrefix(rest, "IpRanges."):
@@ -864,14 +864,14 @@ func (srv *Server) parsePerms(req *http.Request) []permKey {
 			switch rest {
 			case "CidrIp":
 				if !ipPat.MatchString(val) {
-					fatalf(400, "InvalidPermission.Malformed", "Invalid IP range: %q", val)
+					fatal(400, "InvalidPermission.Malformed", "Invalid IP range: %q", val)
 				}
 				ec2p.SourceIPs = append(ec2p.SourceIPs, val)
 			default:
-				fatalf(400, "UnknownParameter", "unknown parameter %q", name)
+				fatal(400, "UnknownParameter", "unknown parameter %q", name)
 			}
 		default:
-			fatalf(400, "UnknownParameter", "unknown parameter %q", name)
+			fatal(400, "UnknownParameter", "unknown parameter %q", name)
 		}
 		perms[id1] = ec2p
 	}
@@ -888,7 +888,7 @@ func (srv *Server) parsePerms(req *http.Request) []permKey {
 	var result []permKey
 	for _, p := range perms {
 		if p.FromPort > p.ToPort {
-			fatalf(400, "InvalidParameterValue", "invalid port range")
+			fatal(400, "InvalidParameterValue", "invalid port range")
 		}
 		k := permKey{
 			protocol: p.Protocol,
@@ -897,7 +897,7 @@ func (srv *Server) parsePerms(req *http.Request) []permKey {
 		}
 		for _, g := range p.SourceGroups {
 			if g.OwnerId != "" && g.OwnerId != ownerId {
-				fatalf(400, "InvalidGroup.NotFound", "group %q not found", g.Name)
+				fatal(400, "InvalidGroup.NotFound", "group %q not found", g.Name)
 			}
 			var ec2g ec2.SecurityGroup
 			switch {
@@ -908,7 +908,7 @@ func (srv *Server) parsePerms(req *http.Request) []permKey {
 			}
 			k.group = srv.group(ec2g)
 			if k.group == nil {
-				fatalf(400, "InvalidGroup.NotFound", "group %v not found", g)
+				fatal(400, "InvalidGroup.NotFound", "group %v not found", g)
 			}
 			result = append(result, k)
 		}
@@ -929,12 +929,12 @@ func (srv *Server) deleteSecurityGroup(w http.ResponseWriter, req *http.Request,
 		Id:   req.Form.Get("GroupId"),
 	})
 	if g == nil {
-		fatalf(400, "InvalidGroup.NotFound", "group not found")
+		fatal(400, "InvalidGroup.NotFound", "group not found")
 	}
 	for _, r := range srv.reservations {
 		for _, h := range r.groups {
 			if h == g && r.hasRunningMachine() {
-				fatalf(500, "InvalidGroup.InUse", "group is currently in use by a running instance")
+				fatal(500, "InvalidGroup.InUse", "group is currently in use by a running instance")
 			}
 		}
 	}
@@ -945,14 +945,14 @@ func (srv *Server) deleteSecurityGroup(w http.ResponseWriter, req *http.Request,
 		}
 		for k := range sg.perms {
 			if k.group == g {
-				fatalf(500, "InvalidGroup.InUse", "group is currently in use by group %q", sg.id)
+				fatal(500, "InvalidGroup.InUse", "group is currently in use by group %q", sg.id)
 			}
 		}
 	}
 
 	delete(srv.groups, g.id)
 	return &ec2.SimpleResp{
-		XMLName:   xml.Name{"", "DeleteSecurityGroupResponse"},
+		XMLName:   xml.Name{Space: "", Local: "DeleteSecurityGroupResponse"},
 		RequestId: reqId,
 	}
 }
@@ -979,12 +979,12 @@ func (c *counter) next() (i int) {
 func atoi(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		fatalf(400, "InvalidParameterValue", "bad number: %v", err)
+		fatal(400, "InvalidParameterValue", "bad number: %v", err)
 	}
 	return i
 }
 
-func fatalf(statusCode int, code string, f string, a ...interface{}) {
+func fatal(statusCode int, code string, f string, a ...interface{}) {
 	panic(&ec2.Error{
 		StatusCode: statusCode,
 		Code:       code,

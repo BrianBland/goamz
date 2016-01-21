@@ -274,8 +274,8 @@ func (s *S) TestCreatePlatformApplication(c *check.C) {
 	testServer.Response(200, nil, TestCreatePlatformApplicationXmlOK)
 
 	attrs := []sns.Attribute{
-		sns.Attribute{Key: "PlatformCredential", Value: "AIzaSyClE2lcV2zEKTLYYo645zfk2jhQPFeyxDo"},
-		sns.Attribute{Key: "PlatformPrincipal", Value: "There is no principal for GCM"},
+		{Key: "PlatformCredential", Value: "AIzaSyClE2lcV2zEKTLYYo645zfk2jhQPFeyxDo"},
+		{Key: "PlatformPrincipal", Value: "There is no principal for GCM"},
 	}
 	resp, err := s.sns.CreatePlatformApplication("gcmpushapp", "GCM", attrs)
 	req := testServer.WaitRequest()
@@ -438,7 +438,7 @@ func (s *S) TestSetEndpointAttributes(c *check.C) {
 	testServer.Response(200, nil, TestSetEndpointAttributesXmlOK)
 
 	attrs := []sns.Attribute{
-		sns.Attribute{Key: "CustomUserData", Value: "My custom userdata"},
+		{Key: "CustomUserData", Value: "My custom userdata"},
 	}
 
 	resp, err := s.sns.SetEndpointAttributes("arn:aws:sns:us-west-2:123456789012:endpoint/GCM/gcmpushapp/5e3e9847-3183-3f18-a7e8-671c3a57d4b3", attrs)
@@ -457,7 +457,7 @@ func (s *S) TestSetPlatformApplicationAttributes(c *check.C) {
 	testServer.Response(200, nil, TestSetPlatformApplicationAttributesXmlOK)
 
 	attrs := []sns.Attribute{
-		sns.Attribute{Key: "EventEndpointCreated", Value: "arn:aws:sns:us-west-2:123456789012:topicarn"},
+		{Key: "EventEndpointCreated", Value: "arn:aws:sns:us-west-2:123456789012:topicarn"},
 	}
 
 	resp, err := s.sns.SetPlatformApplicationAttributes("arn:aws:sns:us-west-2:123456789012:app/GCM/gcmpushapp", attrs)

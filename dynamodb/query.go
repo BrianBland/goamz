@@ -85,7 +85,7 @@ func (t *Table) QueryTable(q Query) ([]map[string]*Attribute, StartKey, error) {
 
 	results := make([]map[string]*Attribute, itemCount)
 
-	for i, _ := range results {
+	for i := range results {
 		item, err := json.Get("Items").GetIndex(i).Map()
 		if err != nil {
 			message := fmt.Sprintf("Unexpected response %s", jsonResponse)

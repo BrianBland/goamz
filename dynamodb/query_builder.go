@@ -335,10 +335,10 @@ func (q *UntypedQuery) AddUpdates(attributes []Attribute, action string) {
 		AttributeNames: map[string]string{},
 	}
 	sections := map[string][]string{
-		"SET":    []string{},
-		"ADD":    []string{},
-		"DELETE": []string{},
-		"REMOVE": []string{},
+		"SET":    {},
+		"ADD":    {},
+		"DELETE": {},
+		"REMOVE": {},
 	}
 	attrIndex := 0
 	for _, a := range attributes {

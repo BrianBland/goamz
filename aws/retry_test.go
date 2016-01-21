@@ -27,7 +27,7 @@ type testCase struct {
 
 var testCases = []testCase{
 	// Test nil fields
-	testCase{
+	{
 		input: testInput{
 			err:        nil,
 			res:        nil,
@@ -43,7 +43,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test 3 different throttling exceptions
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "Throttling",
@@ -59,7 +59,7 @@ var testCases = []testCase{
 			delay:       25 * time.Millisecond,
 		},
 	},
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "ThrottlingException",
@@ -75,7 +75,7 @@ var testCases = []testCase{
 			delay:       25 * time.Millisecond,
 		},
 	},
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "ProvisionedThroughputExceededException",
@@ -92,7 +92,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test a fake throttling exception
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "MyMadeUpThrottlingCode",
@@ -109,7 +109,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test 5xx errors
-	testCase{
+	{
 		input: testInput{
 			res: &http.Response{
 				StatusCode: http.StatusInternalServerError,
@@ -125,7 +125,7 @@ var testCases = []testCase{
 			delay:       50 * time.Millisecond,
 		},
 	},
-	testCase{
+	{
 		input: testInput{
 			res: &http.Response{
 				StatusCode: http.StatusServiceUnavailable,
@@ -142,7 +142,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test a random 400 error
-	testCase{
+	{
 		input: testInput{
 			res: &http.Response{
 				StatusCode: http.StatusNotFound,
@@ -159,7 +159,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test a temporary net.Error
-	testCase{
+	{
 		input: testInput{
 			res: &http.Response{},
 			err: &net.DNSError{
@@ -177,7 +177,7 @@ var testCases = []testCase{
 		},
 	},
 	// Test a non-temporary net.Error
-	testCase{
+	{
 		input: testInput{
 			res: &http.Response{},
 			err: &net.DNSError{
@@ -195,7 +195,7 @@ var testCases = []testCase{
 		},
 	},
 	// Assert failure after hitting max default retries
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "ProvisionedThroughputExceededException",
@@ -212,7 +212,7 @@ var testCases = []testCase{
 		},
 	},
 	// Assert failure after hitting max DynamoDB retries
-	testCase{
+	{
 		input: testInput{
 			err: &Error{
 				Code: "ProvisionedThroughputExceededException",
@@ -229,7 +229,7 @@ var testCases = []testCase{
 		},
 	},
 	// Assert we never go over the maxDelay value
-	testCase{
+	{
 		input: testInput{
 			numRetries: 25,
 		},

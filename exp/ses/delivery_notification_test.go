@@ -42,7 +42,7 @@ func (s *S) TestSNSBounceNotificationUnmarshalling(c *check.C) {
 		"dns; email.example.com")
 	c.Assert(notification.Bounce.BouncedRecipients, check.DeepEquals,
 		[]*ses.BouncedRecipient{
-			&ses.BouncedRecipient{
+			{
 				EmailAddress:   "username@example.com",
 				Status:         "5.1.1",
 				Action:         "failed",
@@ -97,7 +97,7 @@ func (s *S) TestSNSComplaintNotificationUnmarshalling(c *check.C) {
 		ses.COMPLAINT_FEEDBACK_TYPE_ABUSE)
 	c.Assert(notification.Complaint.ComplainedRecipients, check.DeepEquals,
 		[]*ses.ComplainedRecipient{
-			&ses.ComplainedRecipient{
+			{
 				EmailAddress: "recipient1@example.com",
 			},
 		})
