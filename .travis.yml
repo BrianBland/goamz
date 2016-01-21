@@ -4,6 +4,10 @@ go:
   - 1.5
   - tip
 
+# Bypass implicit godep mess-up
+install:
+  - true
+
 script:
   - make fmt
   - make vet

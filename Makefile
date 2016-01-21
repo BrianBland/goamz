@@ -1,6 +1,8 @@
-.PHONY: all fmt vet lint test-short test-long
+.PHONY: all fmt vet lint test test-short test-long
 .DEFAULT: all
 all: AUTHORS fmt vet lint test-short test-long
+test: fmt vet test-short
+
 
 AUTHORS: .mailmap .git/HEAD
 	 git log --format='%aN <%aE>' | sort -fu > $@
