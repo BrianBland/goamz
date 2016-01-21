@@ -1,6 +1,8 @@
-.PHONY: all fmt vet lint test-short test-long
+.PHONY: all fmt vet lint test test-short test-long
 .DEFAULT: all
 all: AUTHORS fmt vet lint test-short test-long
+test: fmt vet test-short
+
 
 AUTHORS: .mailmap .git/HEAD
 	 git log --format='%aN <%aE>' | sort -fu > $@
@@ -39,7 +41,7 @@ test-short:
 
 test-long:
 	@echo "+ $@"
-	go test -v -tags "${BUILDTAGS}" ./autoscaling/ ./aws/ ./cloudfront/ ./cloudwatch/ ./dynamodb/ ./ec2/ ./elasticache/ ./elb/ ./iam/ ./kinesis/ ./rds/ ./route53/ ./s3/ ./sns/ ./sqs/ ./sts/ ./exp/mturk/ ./exp/sdb/ ./exp/ses/
+	go test -tags "${BUILDTAGS}" ./autoscaling/ ./aws/ ./cloudfront/ ./cloudwatch/ ./dynamodb/ ./ec2/ ./elasticache/ ./elb/ ./iam/ ./kinesis/ ./rds/ ./route53/ ./s3/ ./sns/ ./sqs/ ./sts/ ./exp/mturk/ ./exp/sdb/ ./exp/ses/
 
 dep-save:
 	@echo "+ $@"
