@@ -1148,7 +1148,6 @@ func (s3 *S3) setupHttpRequest(req *request) (*http.Request, error) {
 		Method:     req.method,
 		ProtoMajor: 1,
 		ProtoMinor: 1,
-		Close:      true,
 		Header:     req.headers,
 		Form:       req.params,
 	}
