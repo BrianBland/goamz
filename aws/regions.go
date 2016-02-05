@@ -223,7 +223,7 @@ var APNortheast2 = Region{
 	"",
 	true,
 	true,
-	"https://sdb.ap-northeast-2.amazonaws.com",
+	"",
 	"https://sns.ap-northeast-2.amazonaws.com",
 	"https://sqs.ap-northeast-2.amazonaws.com",
 	"",
@@ -235,7 +235,7 @@ var APNortheast2 = Region{
 	"https://autoscaling.ap-northeast-2.amazonaws.com",
 	ServiceInfo{"https://rds.ap-northeast-2.amazonaws.com", V2Signature},
 	"https://kinesis.ap-northeast-2.amazonaws.com",
-	"https://sts.amazonaws.com",
+	"https://sts.ap-northeast-2.amazonaws.com",
 	"https://cloudformation.ap-northeast-2.amazonaws.com",
 	"https://elasticache.ap-northeast-2.amazonaws.com",
 }
