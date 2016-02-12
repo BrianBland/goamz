@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 	"path"
 	"strconv"
 	"strings"
@@ -188,7 +189,7 @@ const (
 // PutBucket creates a new bucket.
 //
 // See http://goo.gl/ndjnR for details.
-func (b *Bucket) PutBucket(perm ACL) error {
+func (b *Bucket) PutBucket(perm ACL) (err error) {
 	headers := map[string][]string{
 		"x-amz-acl": {string(perm)},
 	}
@@ -199,7 +200,13 @@ func (b *Bucket) PutBucket(perm ACL) error {
 		headers: headers,
 		payload: b.locationConstraint(),
 	}
-	return b.S3.query(req, nil)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, nil)
+		if !shouldRetry(err) {
+			break
+		}
+	}
+	return err
 }
 
 // DelBucket removes an existing S3 bucket. All objects in the bucket must
@@ -254,7 +261,7 @@ func (b *Bucket) GetResponse(path string) (resp *http.Response, err error) {
 	return b.GetResponseWithHeaders(path, make(http.Header))
 }
 
-// GetReaderWithHeaders retrieves an object from an S3 bucket
+// GetResponseWithHeaders retrieves an object from an S3 bucket
 // Accepts custom headers to be sent as the second parameter
 // returning the body of the HTTP response.
 // It is the caller's responsibility to call Close on rc when
@@ -367,10 +374,16 @@ func (b *Bucket) PutCopy(path string, perm ACL, options CopyOptions, source stri
 		path:    path,
 		headers: headers,
 	}
+	var err error
 	resp := &CopyObjectResult{}
-	err := b.S3.query(req, resp)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, resp)
+		if !shouldRetry(err) {
+			break
+		}
+	}
 	if err != nil {
-		return resp, err
+		return nil, err
 	}
 	return resp, nil
 }
@@ -384,14 +397,30 @@ func (b *Bucket) PutReader(path string, r io.Reader, length int64, contType stri
 		"x-amz-acl":      {string(perm)},
 	}
 	options.addHeaders(headers)
+	rr, err := newResetReader(r)
+	if err != nil {
+		return err
+	}
 	req := &request{
 		method:  "PUT",
 		bucket:  b.Name,
 		path:    path,
 		headers: headers,
-		payload: r,
+		payload: rr,
 	}
-	return b.S3.query(req, nil)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, nil)
+		if !shouldRetry(err) {
+			break
+		}
+		if attempt.HasNext() {
+			// Reset the reader for the next attempt
+			if err := rr.Reset(); err != nil {
+				return err
+			}
+		}
+	}
+	return err
 }
 
 // addHeaders adds o's specified fields to headers
@@ -502,28 +531,50 @@ func (b *Bucket) PutBucketSubresource(subresource string, r io.Reader, length in
 	headers := map[string][]string{
 		"Content-Length": {strconv.FormatInt(length, 10)},
 	}
+	rr, err := newResetReader(r)
+	if err != nil {
+		return err
+	}
 	req := &request{
 		path:    "/",
 		method:  "PUT",
 		bucket:  b.Name,
 		headers: headers,
-		payload: r,
+		payload: rr,
 		params:  url.Values{subresource: {""}},
 	}
 
-	return b.S3.query(req, nil)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, nil)
+		if !shouldRetry(err) {
+			break
+		}
+		if attempt.HasNext() {
+			// Reset the reader for the next attempt
+			if err := rr.Reset(); err != nil {
+				return err
+			}
+		}
+	}
+	return err
 }
 
 // Del removes an object from the S3 bucket.
 //
 // See http://goo.gl/APeTt for details.
-func (b *Bucket) Del(path string) error {
+func (b *Bucket) Del(path string) (err error) {
 	req := &request{
 		method: "DELETE",
 		bucket: b.Name,
 		path:   path,
 	}
-	return b.S3.query(req, nil)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, nil)
+		if !shouldRetry(err) {
+			break
+		}
+	}
+	return err
 }
 
 type Delete struct {
@@ -552,6 +603,11 @@ func (b *Bucket) DelMulti(objects Delete) error {
 		return err
 	}
 
+	rr, err := newResetReader(buf)
+	if err != nil {
+		return err
+	}
+
 	headers := map[string][]string{
 		"Content-Length": {strconv.FormatInt(int64(size), 10)},
 		"Content-MD5":    {base64.StdEncoding.EncodeToString(digest.Sum(nil))},
@@ -563,10 +619,22 @@ func (b *Bucket) DelMulti(objects Delete) error {
 		params:  url.Values{"delete": {""}},
 		bucket:  b.Name,
 		headers: headers,
-		payload: buf,
+		payload: rr,
 	}
 
-	return b.S3.query(req, nil)
+	for attempt := attempts.Start(); attempt.Next(); {
+		err = b.S3.query(req, nil)
+		if !shouldRetry(err) {
+			break
+		}
+		if attempt.HasNext() {
+			// Reset the reader for the next attempt
+			if err := rr.Reset(); err != nil {
+				return err
+			}
+		}
+	}
+	return err
 }
 
 // The ListResp type holds the results of a List bucket operation.
@@ -1302,4 +1370,46 @@ func hasCode(err error, code string) bool {
 
 func escapePath(s string) string {
 	return (&url.URL{Path: s}).String()
+}
+
+type resetReader struct {
+	io.ReadSeeker
+	resetPos int64
+}
+
+func newResetReader(r io.Reader) (*resetReader, error) {
+	if rr, ok := r.(*resetReader); ok {
+		return rr, nil
+	}
+	var readSeeker io.ReadSeeker
+	var resetPos int64
+	if rs, ok := r.(io.ReadSeeker); ok {
+		readSeeker = rs
+		offset, err := rs.Seek(0, os.SEEK_CUR)
+		if err != nil {
+			return nil, err
+		}
+		resetPos = offset
+	} else {
+		b, err := ioutil.ReadAll(r)
+		if err != nil {
+			return nil, err
+		}
+		readSeeker = bytes.NewReader(b)
+	}
+	return &resetReader{
+		ReadSeeker: readSeeker,
+		resetPos:   resetPos,
+	}, nil
+}
+
+func (r *resetReader) Reset() error {
+	offset, err := r.Seek(r.resetPos, os.SEEK_SET)
+	if err != nil {
+		return err
+	}
+	if offset != r.resetPos {
+		return fmt.Errorf("unable to reset reader")
+	}
+	return nil
 }
